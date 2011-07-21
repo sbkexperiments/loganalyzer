@@ -1,0 +1,255 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+  
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:a4j="http://richfaces.org/a4j" 
+      xmlns:rich="http://richfaces.org/rich"
+      xmlns:fn="http://java.sun.com/jsp/jstl/functions">
+    <h:head>
+          <title>Log Viewer</title>
+    </h:head>
+    <h:body>
+		<h:form id="logEventTableForm">
+		<rich:panel>
+			<rich:collapsiblePanel header="Upload Log File" switchType="client">
+		    	<rich:fileUpload fileUploadListener="#{logEventListBean.fileUploadListener}"
+                	id="upload" acceptedTypes="xml">
+                	<a4j:ajax event="uploadcomplete" execute="@none" render="logFileSelector"/>
+            	</rich:fileUpload>
+            </rich:collapsiblePanel>
+		</rich:panel>
+		<rich:panel>
+			<table>
+				<tr>
+					<td>
+						<b><h:outputLabel value="Select uploaded log file: " for="logFileSelector" /></b>
+					</td>
+					<td>	
+						<rich:select id="logFileSelector" value="#{logEventListBean.selectedLogFileName}"
+							valueChangeListener="#{logEventListBean.selectedLogFileNameValueChangeListener}">
+        					<f:selectItems value="#{logEventListBean.uploadedFileNames}" />	
+  							<a4j:ajax event="change" render="logEventTable" execute="@this" />
+						</rich:select>
+					</td>		
+				</tr>
+			</table>        								
+		</rich:panel>
+		<rich:panel>
+			<!--  <rich:messages />  -->
+    		<rich:extendedDataTable 
+    			id="logEventTable" 
+    			value="#{logEventListBean.logEventListDataModel}" 
+    			var="logEvent" 
+    			rows="20"
+    			style="width:100%;"
+    			selectionMode="single"    			
+    			selection="#{logEventListBean.logEventListDataModel.selection}"
+    			tableState="#{logEventListBean.tableState}">
+    			<a4j:ajax execute="@form"
+                	event="selectionchange"
+                	listener="#{logEventListBean.selectionListener}" render="selectedLogEventPanel" />
+    			<f:facet name="noData">
+                	Nothing found
+            	</f:facet>
+
+	    		<rich:column style="background-color:#{logEvent.color};" width="100px">	    		
+        			<f:facet name="header">
+        				<table>
+        					<tr>
+        						<td>
+        							<h:outputText value="TIMESTAMP" style="text-align:center;"/>		
+        						</td>
+        					</tr>
+        					<tr>
+        						<td>
+        							<h:inputText value="#{logEventListBean.logEventListDataModel.timestampFilter}" size="10">
+        								<a4j:ajax event="blur" render="logEventTable,scroller" onbegin="#{rich:component('scroller')}.first()" execute="@this" />
+        							</h:inputText>          				        						
+        						</td>
+        					</tr>        				
+        				</table>        				
+        			</f:facet>
+            		<h:outputText value="#{logEvent.timestamp}"/>
+    			</rich:column>    			
+            	
+	    		<rich:column style="background-color:#{logEvent.color};" width="200px">	    		
+        			<f:facet name="header">
+        				<table>
+        					<tr>
+        						<td>
+        							<h:outputText value="TIME" style="text-align:center;"/>		
+        						</td>
+        					</tr>
+        					<tr>
+        						<td>
+        							<h:inputText value="#{logEventListBean.logEventListDataModel.timeFilter}" size="20">
+        								<a4j:ajax event="blur" render="logEventTable,scroller" onbegin="#{rich:component('scroller')}.first()" execute="@this" />
+        							</h:inputText>          				        						
+        						</td>
+        					</tr>        				
+        				</table>        				
+        			</f:facet>
+            		<h:outputText value="#{logEvent.time}"/>
+    			</rich:column>    			
+    			    			        		    		
+    			<rich:column style="background-color:#{logEvent.color};" width="100px" >
+        			<f:facet name="header">
+        				<table>
+        					<tr>
+        						<td>
+        							<h:outputText value="LEVEL " style="text-align:center;"/>	
+        						</td>
+        					</tr>
+        					<tr>
+        						<td>
+			        				<h:selectOneMenu id="levelFilterComparator" value="#{logEventListBean.logEventListDataModel.levelFilterComparator}">
+        								<f:selectItem itemLabel="  " itemValue="" />
+  										<f:selectItem itemLabel="==" itemValue="==" />
+  										<f:selectItem itemLabel="!=" itemValue="!=" />
+  										<f:selectItem itemLabel="&lt;" itemValue="&lt;" />
+  										<f:selectItem itemLabel="&lt;=" itemValue="&lt;=" />
+  										<f:selectItem itemLabel="&gt;" itemValue="&gt;" />
+  										<f:selectItem itemLabel="&gt;=" itemValue="&gt;=" />
+  										<a4j:ajax event="change" render="logEventTable,scroller" onbegin="#{rich:component('scroller')}.first()" execute="@this" />
+									</h:selectOneMenu>        					
+        						</td>
+        					</tr>
+        					<tr>
+        						<td>
+			        				<h:selectOneMenu id="levelFilter" value="#{logEventListBean.logEventListDataModel.levelFilter}">
+  										<f:selectItem itemLabel="TRACE" itemValue="TRACE" />
+  										<f:selectItem itemLabel="DEBUG" itemValue="DEBUG" />
+  										<f:selectItem itemLabel="INFO" itemValue="INFO" />
+  										<f:selectItem itemLabel="WARN" itemValue="WARN" />
+  										<f:selectItem itemLabel="ERROR" itemValue="ERROR" />
+  										<f:selectItem itemLabel="FATAL" itemValue="FATAL" />
+  										<a4j:ajax event="change" render="logEventTable,scroller" onbegin="#{rich:component('scroller')}.first()" execute="@this" />
+									</h:selectOneMenu>        				        					
+        						</td>
+        					</tr>        					
+        				</table>
+        				
+        			</f:facet>
+            		<h:outputText value="#{logEvent.level}"/>
+    			</rich:column>
+
+	    		<rich:column style="background-color:#{logEvent.color};" width="150px">	    		
+        			<f:facet name="header">
+        				<table>
+        					<tr>
+        						<td>
+        							<h:outputText value="LOGGER" style="text-align:center;"/>		
+        						</td>
+        					</tr>
+        					<tr>
+        						<td>
+        							<h:inputText value="#{logEventListBean.logEventListDataModel.loggerFilter}" size="15">
+        								<a4j:ajax event="blur" render="logEventTable,scroller" onbegin="#{rich:component('scroller')}.first()" execute="@this" />
+        							</h:inputText>          				        						
+        						</td>
+        					</tr>        				
+        				</table>        				
+        			</f:facet>
+            		<h:outputText value="#{logEvent.logger}"/>
+    			</rich:column>    			
+    			    			
+	    		<rich:column style="background-color:#{logEvent.color};" width="300px">	    		
+        			<f:facet name="header">
+        				<table>
+        					<tr>
+        						<td>
+        							<h:outputText value="MESSAGE" style="text-align:center;"/>		
+        						</td>
+        					</tr>
+        					<tr>
+        						<td>
+        							<h:inputText value="#{logEventListBean.logEventListDataModel.messageFilter}" size="30">
+        								<a4j:ajax event="blur" render="logEventTable,scroller" onbegin="#{rich:component('scroller')}.first()" execute="@this" />
+        							</h:inputText>          				        						
+        						</td>
+        					</tr>        				
+        				</table>        				
+        			</f:facet>
+            		<h:outputText value="#{logEvent.message}"/>
+    			</rich:column>    			
+    			
+    			<rich:column style="background-color:#{logEvent.color};" width="150px">	    		
+        			<f:facet name="header">
+        				<table>
+        					<tr>
+        						<td>
+        							<h:outputText value="THROWABLE" style="text-align:center;"/>		
+        						</td>
+        					</tr>
+        					<tr>
+        						<td>
+        							<h:inputText value="#{logEventListBean.logEventListDataModel.throwableFilter}" size="15">
+        								<a4j:ajax event="blur" render="logEventTable,scroller" onbegin="#{rich:component('scroller')}.first()" execute="@this" />
+        							</h:inputText>          				        						
+        						</td>
+        					</tr>        				
+        				</table>        				
+        			</f:facet>
+            		<h:outputText value="#{logEvent.throwable}"/>
+    			</rich:column>    			
+    			
+    				
+	    		<rich:column style="background-color:#{logEvent.color};" width="100px">	    		
+        			<f:facet name="header">
+        				<table>
+        					<tr>
+        						<td>
+        							<h:outputText value="THREAD" style="text-align:center;"/>		
+        						</td>
+        					</tr>
+        					<tr>
+        						<td>
+        							<h:inputText value="#{logEventListBean.logEventListDataModel.threadFilter}" size="10">
+        								<a4j:ajax event="blur" render="logEventTable,scroller" onbegin="#{rich:component('scroller')}.first()" execute="@this" />
+        							</h:inputText>          				        						
+        						</td>
+        					</tr>        				
+        				</table>        				
+        			</f:facet>
+            		<h:outputText value="#{logEvent.thread}"/>
+    			</rich:column>    			
+    			
+    			<f:facet name="footer">
+                	<rich:dataScroller id="scroller" page="#{logEventListBean.logEventListDataModel.pageNumber}" />
+            	</f:facet>
+            	
+			</rich:extendedDataTable>
+		</rich:panel>
+		<rich:panel>
+			<rich:collapsiblePanel header="Log Event Details" switchType="client"	
+				id="selectedLogEventPanel"
+				style="background-color:#{logEventListBean.selectedLogEvent.color}; width:100%" >
+			 	<table>
+			 		<tr><td><b>TIME:</b></td><td>#{logEventListBean.selectedLogEvent.time}</td></tr>
+			 		<tr><td><b>TIMESTAMP:</b></td><td>#{logEventListBean.selectedLogEvent.timestamp}</td></tr>
+			 		<tr><td><b>LEVEL:</b></td><td>#{logEventListBean.selectedLogEvent.level}</td></tr>
+			 		<tr><td><b>LOGGER:</b></td><td>#{logEventListBean.selectedLogEvent.logger}</td></tr>
+			 		<tr><td><b>MESSAGE:</b></td><td>#{logEventListBean.selectedLogEvent.message}</td></tr>
+			 		<tr><td><b>THROWABLE:</b></td><td>#{logEventListBean.selectedLogEvent.throwable}</td></tr>
+			 		<tr><td><b>THREAD:</b></td><td>#{logEventListBean.selectedLogEvent.thread}</td></tr>
+			 		<tr><td>
+			 				<b>LOCATION INFO</b>
+			 			</td>
+			 			<td>
+			 				<table>
+			 					<tr><td><b>CLASS:</b></td><td>#{logEventListBean.selectedLogEvent.locationInfo.className}</td></tr>
+			 					<tr><td><b>METHOD:</b></td><td>#{logEventListBean.selectedLogEvent.locationInfo.method}</td></tr>
+			 					<tr><td><b>FILE:</b></td><td>#{logEventListBean.selectedLogEvent.locationInfo.file}</td></tr>
+			 					<tr><td><b>LINE:</b></td><td>#{logEventListBean.selectedLogEvent.locationInfo.line}</td></tr>
+			 				</table>
+			 			</td>
+			 		</tr>
+			 	</table>
+			 </rich:collapsiblePanel>
+		</rich:panel>
+		</h:form>
+    </h:body>
+</html>     
