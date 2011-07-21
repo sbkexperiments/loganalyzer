@@ -1,4 +1,4 @@
-package loganalyzer;
+package org.sbk.hobby.loganalyzer;
 
 import java.io.Serializable;
 

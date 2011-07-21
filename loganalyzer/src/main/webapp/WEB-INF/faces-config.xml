@@ -4,7 +4,48 @@
 
     <managed-bean>
         <managed-bean-name>richBean</managed-bean-name>
-        <managed-bean-class>loganalyzer.RichBean</managed-bean-class>
+        <managed-bean-class>org.sbk.hobby.loganalyzer.RichBean</managed-bean-class>
         <managed-bean-scope>view</managed-bean-scope>
+    </managed-bean>
+    
+	<managed-bean>
+        <managed-bean-name>logEventListBean</managed-bean-name>
+        <managed-bean-class>org.sbk.hobby.loganalyzer.managedbeans.LogEventListBean</managed-bean-class>
+        <managed-bean-scope>session</managed-bean-scope>
+       	<managed-property>
+			<property-name>logEventList</property-name> 
+			<property-class>java.util.List</property-class> 
+			<value/>
+		</managed-property>
+		<managed-property>
+			<property-name>logEventListDataModel</property-name> 
+			<property-class>org.sbk.hobby.loganalyzer.extendeddatamodel.LogEventListDataModel</property-class> 
+			<value/>
+		</managed-property>		
+		<managed-property>
+			<property-name>selectedLogEvent</property-name> 
+			<property-class>org.sbk.hobby.loganalyzer.model.LogEvent</property-class> 
+			<value/>
+		</managed-property>
+       	<managed-property>
+			<property-name>selection</property-name> 
+			<property-class>java.util.Collection</property-class> 
+			<value/>
+		</managed-property>		
+		<managed-property>
+			<property-name>tableState</property-name> 
+			<property-class>java.lang.String</property-class> 
+			<value/>
+		</managed-property>
+		<managed-property>
+			<property-name>selectedLogFileName</property-name> 
+			<property-class>java.lang.String</property-class> 
+			<value/>
+		</managed-property>
+		<managed-property>
+			<property-name>uploadedFileNames</property-name> 
+			<property-class>java.util.Set</property-class> 
+			<value/>
+		</managed-property>
     </managed-bean>
 </faces-config>
